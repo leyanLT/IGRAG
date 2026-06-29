@@ -1,0 +1,14 @@
+**/.history
+.DS_Store
+__pycache__/
+*.pyc
+*.egg-info
+build/
+.idea/
+.venv/
+env/
+output/
+dist/*
+upload_pypi.sh
+tests/*
+scripts/train_data/*.jsonl

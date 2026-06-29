@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this IG-RAG reproduction code, please cite the IG-RAG paper and FlashRAG."
+title: "IG-RAG: Paper Reproduction Code"
+version: "0.1.0"
+date-released: 2026-06-07
+authors:
+  - name: "IG-RAG Authors"
+license: "MIT"
+preferred-citation:
+  type: article
+  title: "From Fixed Top-k to Minimal Sufficient Evidence: Information-Gain-Driven Retrieval for RAG"
+  authors:
+    - name: "IG-RAG Authors"
+  year: 2026
+  notes: "TODO: replace with the official venue, DOI, arXiv ID, and author list when available."
+references:
+  - type: article
+    title: "FlashRAG: A Modular Toolkit for Efficient Retrieval-Augmented Generation Research"
+    authors:
+      - family-names: "Jin"
+        given-names: "Jiajie"
+      - family-names: "Zhu"
+        given-names: "Yutao"
+      - family-names: "Yang"
+        given-names: "Xinyu"
+      - family-names: "Zhang"
+        given-names: "Chenghao"
+      - family-names: "Dou"
+        given-names: "Zhicheng"
+      - family-names: "Wen"
+        given-names: "Ji-Rong"
+    journal: "CoRR"
+    volume: "abs/2405.13576"
+    year: 2024
+    url: "https://arxiv.org/abs/2405.13576"
