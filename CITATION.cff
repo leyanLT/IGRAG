@@ -1,18 +1,45 @@
 cff-version: 1.2.0
-message: "If you use this IG-RAG reproduction code, please cite the IG-RAG paper and FlashRAG."
-title: "IG-RAG: Paper Reproduction Code"
+message: "If you use this IGRAG reproduction code, please cite the IGRAG paper and FlashRAG."
+title: "IGRAG: Learning to Select and Stop"
 version: "0.1.0"
-date-released: 2026-06-07
+date-released: 2026-07-13
 authors:
-  - name: "IG-RAG Authors"
+  - family-names: "Zhang"
+    given-names: "Zhicheng"
+  - family-names: "Yao"
+    given-names: "Yuchen"
+  - family-names: "Zhou"
+    given-names: "Wentao"
+  - family-names: "Sun"
+    given-names: "Jinran"
+  - family-names: "Lu"
+    given-names: "Haohao"
+  - family-names: "Cao"
+    given-names: "Lei"
+  - family-names: "Li"
+    given-names: "Jie"
 license: "MIT"
 preferred-citation:
   type: article
-  title: "From Fixed Top-k to Minimal Sufficient Evidence: Information-Gain-Driven Retrieval for RAG"
+  title: "Learning to Select and Stop: A Distilled Neural Policy for Compact Evidence Construction in Retrieval-Augmented Generation"
   authors:
-    - name: "IG-RAG Authors"
+    - family-names: "Zhang"
+      given-names: "Zhicheng"
+    - family-names: "Yao"
+      given-names: "Yuchen"
+    - family-names: "Zhou"
+      given-names: "Wentao"
+    - family-names: "Sun"
+      given-names: "Jinran"
+    - family-names: "Lu"
+      given-names: "Haohao"
+    - family-names: "Cao"
+      given-names: "Lei"
+    - family-names: "Li"
+      given-names: "Jie"
   year: 2026
-  notes: "TODO: replace with the official venue, DOI, arXiv ID, and author list when available."
+  notes: "Preprint submitted to Elsevier."
+  url: "https://github.com/leyanLT/IGRAG"
 references:
   - type: article
     title: "FlashRAG: A Modular Toolkit for Efficient Retrieval-Augmented Generation Research"

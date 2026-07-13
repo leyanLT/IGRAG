@@ -1,10 +1,12 @@
-# IGRAG: Paper Reproduction Code
+# IGRAG: Learning to Select and Stop
 
-This repository contains the reproduction code for **IGRAG**.
+This repository contains the reproduction code for the IGRAG paper:
 
-> Paper title: **IGRAG: Information-Gain-Driven Compact Evidence Construction for Retrieval-Augmented Generation**
+> **Learning to Select and Stop: A Distilled Neural Policy for Compact Evidence Construction in Retrieval-Augmented Generation**
 >
 > Citation: see [Citation](#citation).
+
+IGRAG is an information-gain-driven Retrieval-Augmented Generation (RAG) framework that replaces fixed top-k retrieval with **compact sufficient evidence construction**. It treats evidence selection as a sequential decision process over candidate documents plus an explicit `STOP` action. A distilled neural selector-stopper policy decides which document to add next and when the selected evidence set is sufficient for answer generation.
 
 Main IGRAG-SFT results reported in the paper:
 
@@ -18,9 +20,9 @@ Main IGRAG-SFT results reported in the paper:
 IGRAG is implemented on top of [FlashRAG](https://github.com/RUC-NLPIR/FlashRAG). Following the paper, retrieval is reformulated as **compact sufficient evidence construction** rather than fixed top-k selection. The reproduction contains two high-level stages:
 
 ```text
-selector-stopper distillation
+distilled neural selector-stopper policy
   Qwen-Plus teacher trajectories
-  -> step-wise selection and stopping SFT data
+  -> 115K step-wise state-action supervision instances
   -> LoRA fine-tuning of Qwen2.5-7B-Instruct
   -> local OpenAI-compatible selector-stopper service
 
@@ -31,14 +33,14 @@ IGRAG inference
   -> multi-query mixture evidence pool construction
        deduplicate documents and keep branch provenance, hit count, branch rank, and dense score
   -> novelty-aware incremental evidence selection
-       select useful and non-redundant evidence by estimated marginal information gain
+       select useful and non-redundant evidence by policy-estimated marginal utility
   -> sufficiency-aware dynamic stopping
-       stop when selected evidence is sufficient or remaining candidates cannot fill a critical gap
+       emit STOP when the selected evidence set is judged sufficient
   -> answer generation with the compact sufficient evidence set
   -> evaluation, information-gain curve, and average-k analysis
 ```
 
-This repository is packaged as an IGRAG paper reproduction codebase. The `flashrag/` package is retained because IGRAG extends FlashRAG components for dataset loading, retrieval, generation, and evaluation. New IGRAG-specific logic is mainly implemented in the pipeline hooks, query rewriting, evidence pool construction, selector-stopper, training scripts, and analysis scripts.
+This repository is packaged as an IGRAG paper reproduction codebase. The `flashrag/` package is retained because IGRAG extends FlashRAG components for dataset loading, retrieval, generation, and evaluation. New IGRAG-specific logic is mainly implemented in the pipeline hooks, query rewriting, multi-query mixture evidence pool construction, neural selector-stopper, training scripts, and analysis scripts.
 
 The main reproduction scripts are:
 
@@ -298,14 +300,21 @@ The evidence-stop model used by IGRAG is **not trained from scratch**. It is a L
 
 Use the original `Qwen2.5-7B-Instruct` checkpoint as `--model-path`, and save only the LoRA adapter to `--output-dir`. During evaluation, this adapter is served together with the same base model under the OpenAI-compatible model name `qwen2.5-evidence-stop-sft`.
 
-The evidence selection/stop training data is already included:
+The full evidence selection/stop training archive is included in the repository:
 
 ```text
-scripts/train_data/train_data_all.jsonl
-scripts/train_data/small_train_data.jsonl
+scripts/train_data/train_data_all.jsonl.zip
 ```
 
-Use `train_data_all.jsonl` for the full reproduction. It contains 115,655 SFT instances distilled from Qwen-Plus teacher trajectories on the training splits of HotpotQA, 2WikiMultiHopQA, and MuSiQue:
+Unzip it before training:
+
+```bash
+cd scripts/train_data
+unzip train_data_all.jsonl.zip
+cd ../..
+```
+
+Use `scripts/train_data/train_data_all.jsonl` for the full reproduction after extraction. It contains 115,655 SFT instances distilled from Qwen-Plus teacher trajectories on the training splits of HotpotQA, 2WikiMultiHopQA, and MuSiQue:
 
 | Source split | Instances |
 | --- | ---: |
@@ -313,7 +322,7 @@ Use `train_data_all.jsonl` for the full reproduction. It contains 115,655 SFT in
 | 2WikiMultiHopQA train | 50,011 |
 | MuSiQue train | 28,262 |
 
-The SFT tasks cover both `select_candidate` and `judge_stop` decisions. Use `small_train_data.jsonl` for the small-data ablation experiment; it contains 23,377 instances sampled from the same sources.
+The SFT tasks cover both `select_candidate` and `judge_stop` decisions. The small-data ablation in the paper uses `small_train_data.jsonl`, containing 23,377 instances sampled from the same sources. If you want to reproduce that ablation, prepare the sampled file locally and place it under `scripts/train_data/`.
 
 Small-data ablation LoRA fine-tuning:
 
@@ -369,7 +378,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4 torchrun --nproc_per_node 5 scripts/train_evidenc
   --tokenization-stats-sample-size 1000
 ```
 
-If you use the training data shipped with this repository, set `--data-path` to `scripts/train_data/train_data_all.jsonl`.
+If you use the training data shipped with this repository, first extract `scripts/train_data/train_data_all.jsonl.zip`, then set `--data-path` to `scripts/train_data/train_data_all.jsonl`.
 
 The training script saves:
 
@@ -581,8 +590,9 @@ IG-RAG/
       evidence_selection_stop.py
   scripts/
     train_data/
-      train_data_all.jsonl
-      small_train_data.jsonl
+      train_data_all.jsonl.zip
+      train_data_all.jsonl      # created after extraction; ignored by Git
+      small_train_data.jsonl    # optional local file for small-data ablation
     train_evidence_stop_lora.py
     check_evidence_stop_endpoint.py
     prepare_multihoprag.py
@@ -599,8 +609,8 @@ IG-RAG/
 Please cite the IGRAG paper when using this reproduction code:
 
 ```bibtex
-@misc{igrag2026,
-  title  = {IGRAG: Information-Gain-Driven Compact Evidence Construction for Retrieval-Augmented Generation},
+@misc{learning_select_stop_igrag2026,
+  title  = {Learning to Select and Stop: A Distilled Neural Policy for Compact Evidence Construction in Retrieval-Augmented Generation},
   author = {Zhang, Zhicheng and Yao, Yuchen and Zhou, Wentao and Sun, Jinran and Lu, Haohao and Cao, Lei and Li, Jie},
   year   = {2026},
   note   = {Preprint submitted to Elsevier},
