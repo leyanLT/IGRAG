@@ -36,10 +36,10 @@ config_dict = {
     "use_query_rewrite": True,
     "query_rewrite_setting": {
         "model": "qwen-turbo",
-        "api_key": "sk-356858d231bc4085a2cd1bc1f6648c00",
+        "api_key": None,
         "api_key_env": "DASHSCOPE_API_KEY",
         "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
-        "max_branches": 3,
+        "max_branches": 2,
         "original_topk": 6,
         "branch_topk": 6,
         "temperature": 0,
